@@ -1,8 +1,9 @@
-# Prueba técnica para Sistemas Expertos 
+# Prueba técnica para Sistemas Expertos
 
-CRUD para gestión de bodegas.
+Mantenedor para gestión de bodegas.
 
 ## Tecnologías
+
 - PHP
 - PostgreSQL
 - Docker
