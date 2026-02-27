@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
      # -------------------------------------------------------
      # Servicio PHP + Apache
@@ -37,7 +35,6 @@ services:
           ports:
                - "5432:5432"
           volumes:
-               # Script SQL se ejecuta automáticamente al iniciar por primera vez
                - ./sql/schema.sql:/docker-entrypoint-initdb.d/schema.sql
                - pgdata:/var/lib/postgresql/data
           healthcheck:
