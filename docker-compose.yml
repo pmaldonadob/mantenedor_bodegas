@@ -1,0 +1,58 @@
+version: "3.8"
+
+services:
+     # -------------------------------------------------------
+     # Servicio PHP + Apache
+     # -------------------------------------------------------
+     web:
+          build: .
+          container_name: bodegas_web
+          ports:
+               - "8080:80"
+          volumes:
+               - .:/var/www/html
+          environment:
+               DB_HOST: db
+               DB_PORT: 5432
+               DB_NAME: bodegas_db
+               DB_USER: bodegas_user
+               DB_PASS: bodegas_pass
+          depends_on:
+               db:
+                    condition: service_healthy
+          networks:
+               - bodegas_net
+          restart: unless-stopped
+
+     # -------------------------------------------------------
+     # Servicio PostgreSQL
+     # -------------------------------------------------------
+     db:
+          image: postgres:13-alpine
+          container_name: bodegas_db
+          environment:
+               POSTGRES_DB: bodegas_db
+               POSTGRES_USER: bodegas_user
+               POSTGRES_PASSWORD: bodegas_pass
+          ports:
+               - "5432:5432"
+          volumes:
+               # Script SQL se ejecuta automáticamente al iniciar por primera vez
+               - ./sql/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+               - pgdata:/var/lib/postgresql/data
+          healthcheck:
+               test: ["CMD-SHELL", "pg_isready -U bodegas_user -d bodegas_db"]
+               interval: 5s
+               timeout: 5s
+               retries: 5
+          networks:
+               - bodegas_net
+          restart: unless-stopped
+
+volumes:
+     pgdata:
+          driver: local
+
+networks:
+     bodegas_net:
+          driver: bridge
